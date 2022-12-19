@@ -1,3 +1,4 @@
+const inquirer = ('inquirer')
 const express = require('express');
 // Import and require mysql2
 const mysql = require('mysql2');
@@ -17,16 +18,16 @@ const db = mysql.createConnection(
     user: 'root',
     // TODO: Add MySQL password here
     password: 'root',
-    database: 'movies_db'
+    database: 'employee_db'
   },
-  console.log(`Connected to the movies_db database.`)
+  console.log(`Connected to the employee_db database.`)
 );
 
 // Create a movie
 app.post('/api/new-movie', ({ body }, res) => {
   const sql = `INSERT INTO movies (movie_name)
     VALUES (?)`;
-  const params = [body.movie_name];
+  const params = [body.employee_name];
   
   db.query(sql, params, (err, result) => {
     if (err) {
