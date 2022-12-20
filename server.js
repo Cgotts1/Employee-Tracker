@@ -1,67 +1,33 @@
 // Import and require mysql2
-const mysql = require('mysql2');
+const mysql = require("mysql2");
 // Import inquirer
 const inquirer = require("inquirer");
-
 
 // Connect to database
 const db = mysql.createConnection(
   {
-    host: 'localhost',
+    host: "localhost",
     // MySQL username,
-    user: 'root',
+    user: "root",
     // MySQL password
-    password: 'root',
-    database: 'employee_db'
+    password: "root",
+    database: "employee_db",
   },
   console.log(`Connected to the employee_db database.`)
-
-  // Function that starts the questions
-  // startApplication();
 );
 
-// Query database
-db.query('SELECT * FROM employee', function (err, results) {
-  console.log(results);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-let employees = [];
-
+//---------------------------------------------------------------------------------
 // Message at beginning of application
 console.log("-----EMPLOYEE TRACKER-----");
 
-// Questions at the beginning for creating a manager
-const questionsManager = [
+// Question at the beginning of the application
+const startQuestion = [
   {
     type: "list",
-    message: "Hello, please select the following to begin?",
+    message: "Hello, would you like to start using the database?",
     name: "name",
-    choices: ["Start navigating database"],
+    choices: ["Start", "Quit"],
   },
-
 ];
 
 // Main question that will be asked everytime when creaitng a new employee
@@ -69,77 +35,167 @@ const mainQuestion = [
   {
     type: "list",
     message: "What would you like to do?",
-    name: "position",
-    choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
+    name: "choice",
+    choices: [
+      "View All Employees",
+      "Add Employee",
+      "Update Employee Role",
+      "View All Roles",
+      "Add Role",
+      "View All Departments",
+      "Add Department",
+      "Quit",
+    ],
   },
 ];
 
-// Questions for adding a departmentName
-const questionsEngineer = [
+//----------------------------------------------------------------------------
+// Function for when view all employees is selected
+function viewAllEmployees() {
+  db.query(
+    "SELECT first_name, last_name FROM employee",
+    function (err, results) {
+      console.log(results);
+      mainQuestionFunction();
+    }
+  );
+}
+
+// Function for when view all roles is selected
+function viewAllRoles() {
+  db.query("SELECT * FROM employee", function (err, results) {
+    console.log(results);
+    mainQuestionFunction();
+  });
+}
+
+// Function for when view all departments is selected
+function viewAllDepartments() {
+  db.query("SELECT * FROM employee", function (err, results) {
+    console.log(results);
+    mainQuestionFunction();
+  });
+}
+
+// -----------------------------------------------------------------
+
+let newEmployee = [];
+
+// Questions for adding an Employee
+const employeeQuestions = [
+  {
+    type: "input",
+    message: "What is the employee's first name?",
+    name: "firstName",
+  },
+  {
+    type: "input",
+    message: "What is the employee's last name?",
+    name: "lastName",
+  },
+  {
+    type: "list",
+    message: "What is the employee's role?",
+    name: "role",
+    choices: [
+      "Sales Lead",
+      "Sales Person",
+      "Lead Engineer",
+      "Software Engineer",
+      "Account Manager",
+      "Accountant",
+      "Legal Team Lead",
+      "Lawyer",
+    ],
+  },
+  {
+    type: "list",
+    message: "Who is the employee's manager?",
+    name: "manager",
+    choices: [
+      "John Doe",
+      "Mike Chan",
+      "Ashley Rodriquez",
+      "Kevin Tupik",
+      "Kunal Singh",
+      "Malia Brown",
+      "Sarah Lourd",
+      "Tom Allen",
+    ],
+  },
+];
+
+// Stores answers
+let newRole = [];
+
+// Questions for adding a role
+const roleQuestions = [
+  {
+    type: "input",
+    message: "What is the name of the role?",
+    name: "roleName",
+  },
+  {
+    type: "input",
+    message: "What is the salary of the role?",
+    name: "roleSalary",
+  },
+  {
+    type: "list",
+    message: "What department do the role belong to?",
+    name: "roleDepartment",
+    choices: ["Sales", "Engineering", "Finance", "Legal"],
+  },
+];
+
+// Stores answers
+let newDepartment = [];
+
+// Question for adding a department
+const departmentQuestion = [
   {
     type: "input",
     message: "What is the name of the department?",
-    name: "name",
+    name: "departmentName",
   },
 ];
 
+//----------------------------------------------------------------------
 
+let newUpdate = [];
 
-// Questions for adding an employee
-const questionsToAddEmployeeRole = [
-    {
-      type: "input",
-      message: "What is the employee's first name?",
-      name: "name",
-    },
-    {
-      type: "input",
-      message: "What is the employee's last name?",
-      name: "id",
-    },
-    {
-      type: "list",
-      message: "What is the employee's role?",
-      name: "employeeRole",
-      choices: ['Sales Lead', 'Sales Person', ' Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer'],
-    },
-    {
-      type: "list",
-      message: "Who is the employee's manager?",
-      name: "employeeManager",
-      choices: ['John Doe', 'Ashley Rodriguez', 'Kunal Singh', 'Sarah Lourd'],
-    },
-  ];
-
-// Questions for updating employee role
-const questionsIntern = [
+const updateEmployeeRoleQuestions = [
   {
     type: "list",
     message: "Which employee's role do you want to update?",
-    name: "name",
-    choices: ["List of employee names"]
+    name: "updateName",
+    choices: [
+      "John Doe",
+      "Mike Chan",
+      "Ashley Rodriquez",
+      "Kevin Tupik",
+      "Kunal Singh",
+      "Malia Brown",
+      "Sarah Lourd",
+      "Tom Allen",
+    ],
   },
   {
-    type: "input",
-    message: "What is the salary?",
-    name: "id",
-  },
-  {
-    type: "input",
-    message: "What is the department?",
-    name: "email",
-  },
-  {
-    type: "input",
-    message: "What is the team Intern's school?",
-    name: "school",
+    type: "list",
+    message: "What role do you want to assign to the selected employee?",
+    name: "updateAssign",
+    choices: [
+      "Sales Lead",
+      "Sales Person",
+      "Lead Engineer",
+      "Software Engineer",
+      "Account Manager",
+      "Accountant",
+      "Legal Team Lead",
+      "Lawyer",
+    ],
   },
 ];
-
-
-
-
-
 
 // Generates the HTML page after done creating employees
 // function generateHTML() {
@@ -157,52 +213,13 @@ const questionsIntern = [
 //     }
 //   }
 
-//   const template = `
-//   <!DOCTYPE html>
-//   <html lang="en">
-//   <head>
-//     <meta charset="UTF-8" />
-//     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-//     <meta name="viewport" content="width=, initial-scale=1.0" />
-//     <link rel="stylesheet" href="style.css" />
-//     <title>Team Generator</title>
-//   </head>
-
-//   <body>
-//   <header class="my-team">
-//     <h1 class="title">My Team</h1>
-//   </header>
-
-//   <div class="cards-container">
-    
-//       ${cards}
-    
-//   </div>  
-
-//   <footer>
-  
-//   </footer>
-//   </body>
-// `;
-//   return template;
-// }
-
-
-
-
-
-
 // Enables prompting of questions and takes in users input
-inquirer.prompt(questionsManager).then((answers) => {
-  let newManager = new Manager(
-    answers.name,
-    answers.id,
-    answers.email,
-    answers.officeNumber
-  );
-  employees.push(newManager);
-  console.log(employees);
-  mainQuestionFunction(); // Allows to loop through questions
+inquirer.prompt(startQuestion).then((answers) => {
+  if (answers.name === "Quit") {
+    return Quitting;
+  } else {
+    mainQuestionFunction(); // Allows to loop through questions
+  }
 });
 
 // Asks the main question
@@ -233,6 +250,56 @@ function mainQuestionFunction() {
         console.log(employees);
         mainQuestionFunction(); //Allows to loop through questions
       });
+    } else if (answers.choice === "View All Employees") {
+      viewAllEmployees();
+    } else if (answers.choice === "View All Roles") {
+      viewAllRoles();
+    } else if (answers.choice === "View All Departments") {
+      viewAllDepartments();
+    } else if (answers.choice === "Add Employee") {
+      inquirer.prompt(employeeQuestions).then((answers) => {
+        let employeeResults = [
+          `${answers.firstName} ${answers.lastName}, ${answers.role}, ${answers.manager}`
+        ];
+
+        newEmployee.push(employeeResults)
+        console.log(newEmployee)
+
+        console.log(
+          `Added ${answers.firstName} ${answers.lastName} to the database`
+        );
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+
+      // addEmployee()
+    } else if (answers.choice === "Add Role") {
+      inquirer.prompt(roleQuestions).then((answers) => {
+
+        let roleResults = [`${answers.roleName}, ${answers.roleSalary}, ${answers.roleDepartment}`]
+        newRole.push(roleResults)
+        console.log(newRole)
+        console.log(`Added ${answers.roleName} to the database`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Add Department") {
+      inquirer.prompt(departmentQuestion).then((answers) => {
+
+        let departmentResults = [`${answers.departmentName}`];
+        newDepartment.push(departmentResults);
+        console.log(newDepartment)
+        console.log(`Added ${answers.departmentName} to the database`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Update Employee Role") {
+      inquirer.prompt(updateEmployeeRoleQuestions).then((answers) => {
+        let updateResults = [`${answers.updateName}, ${answers.updateAssign}`];
+        newUpdate.push(updateResults);
+        console.log(newUpdate);
+        console.log(`Updated Employee's Role`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Quit") {
+      quit();
     } else {
       console.log("Generating team");
       console.log(employees);
