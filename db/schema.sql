@@ -6,7 +6,7 @@ USE employee_db;
 
 CREATE TABLE department(
 
-    id INT PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
 
     name VARCHAR(30)
 );
@@ -14,20 +14,19 @@ CREATE TABLE department(
 
 CREATE TABLE role(
 
-    id INT NOT NULL AUTO_INCREMENT,
+    id INT NOT NULL PRIMARY KEY,
 
     title VARCHAR(30),
 
     salary DECIMAL,
 
-    department_id INT,
+    department_id INT
 
-    PRMARY KEY (id)
 );
 
 CREATE TABLE employee(
 
-    id INT PRIMARY KEY,
+    id INT NOT NULL PRIMARY KEY,
 
     first_name VARCHAR(30),
 
@@ -35,7 +34,5 @@ CREATE TABLE employee(
 
     role_id INT,
 
-    manager_id INT,
-
-    PRIMARY KEY (id) 
+    manager_id INT
 );

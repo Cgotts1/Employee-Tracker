@@ -53,9 +53,9 @@ const mainQuestion = [
 // Function for when view all employees is selected
 function viewAllEmployees() {
   db.query(
-    "SELECT first_name, last_name FROM employee",
+    "SELECT * FROM employee",
     function (err, results) {
-      console.log(results);
+      console.table(results);            // Formatting
       mainQuestionFunction();
     }
   );
@@ -63,16 +63,16 @@ function viewAllEmployees() {
 
 // Function for when view all roles is selected
 function viewAllRoles() {
-  db.query("SELECT * FROM employee", function (err, results) {
-    console.log(results);
+  db.query("SELECT * FROM role", function (err, results) {
+    console.table(results);
     mainQuestionFunction();
   });
 }
 
 // Function for when view all departments is selected
 function viewAllDepartments() {
-  db.query("SELECT * FROM employee", function (err, results) {
-    console.log(results);
+  db.query("SELECT * FROM department", function (err, results) {
+    console.table(results);
     mainQuestionFunction();
   });
 }
@@ -238,18 +238,6 @@ function mainQuestionFunction() {
         console.log(employees);
         mainQuestionFunction();
       }); //Allows to loop through questions
-    } else if (answers.position === "Intern") {
-      inquirer.prompt(questionsIntern).then((answers) => {
-        let newIntern = new Intern(
-          answers.name,
-          answers.id,
-          answers.email,
-          answers.school
-        );
-        employees.push(newIntern);
-        console.log(employees);
-        mainQuestionFunction(); //Allows to loop through questions
-      });
     } else if (answers.choice === "View All Employees") {
       viewAllEmployees();
     } else if (answers.choice === "View All Roles") {
@@ -264,7 +252,6 @@ function mainQuestionFunction() {
 
         newEmployee.push(employeeResults)
         console.log(newEmployee)
-
         console.log(
           `Added ${answers.firstName} ${answers.lastName} to the database`
         );
