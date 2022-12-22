@@ -23,7 +23,7 @@ Link to video demonstration: https://drive.google.com/file/d/1nTql6j8v9ov0MurceN
 Command to Install Dependencies: npm i inquirer
 
 ## <section id = "Usage">Usage</section>
-Using the Repo: The Employee-Tracker can only add and update certain information reagrding departments and employees.
+Using the Repo: The Employee-Tracker can only add and update certain information regarding departments and employees.
 
 ## <section id = "Contributing">Contributing</section>
 Contributing to the Repo: Currently not taking contributions.

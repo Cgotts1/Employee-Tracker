@@ -52,13 +52,10 @@ const mainQuestion = [
 //----------------------------------------------------------------------------
 // Function for when view all employees is selected
 function viewAllEmployees() {
-  db.query(
-    "SELECT * FROM employee",
-    function (err, results) {
-      console.table(results);            // Formatting
-      mainQuestionFunction();
-    }
-  );
+  db.query("SELECT * FROM employee", function (err, results) {
+    console.table(results); // Formatting
+    mainQuestionFunction();
+  });
 }
 
 // Function for when view all roles is selected
@@ -71,7 +68,7 @@ function viewAllRoles() {
 
 // Function for when view all departments is selected
 function viewAllDepartments() {
-  db.query("SELECT * FROM department", function (err, results) {
+  db.query(`SELECT * FROM department`, function (err, results) {
     console.table(results);
     mainQuestionFunction();
   });
@@ -142,7 +139,7 @@ const roleQuestions = [
   },
   {
     type: "list",
-    message: "What department do the role belong to?",
+    message: "What department does the role belong to?",
     name: "roleDepartment",
     choices: ["Sales", "Engineering", "Finance", "Legal"],
   },
@@ -197,6 +194,113 @@ const updateEmployeeRoleQuestions = [
   },
 ];
 
+// Enables prompting of questions and takes in users input
+inquirer.prompt(startQuestion).then((answers) => {
+  if (answers.name === "Quit") {
+    return Quitting;
+  } else {
+    mainQuestionFunction(); // Allows to loop through questions
+  }
+});
+
+// Asks the main question
+function mainQuestionFunction() {
+  inquirer.prompt(mainQuestion).then((answers) => {
+    if (answers.choice === "View All Employees") {
+      viewAllEmployees();
+    } else if (answers.choice === "View All Roles") {
+      viewAllRoles();
+    } else if (answers.choice === "View All Departments") {
+      viewAllDepartments();
+    } else if (answers.choice === "Add Employee") {
+      inquirer.prompt(employeeQuestions).then((answers) => {
+        let employeeResultsFirstName = [`${answers.firstName}`];
+        let employeeResultsLastName = [`${answers.lastName}`];
+        let employeeResultsRole = [`${answers.role}`];
+        let employeeResultsManager = [`${answers.manager}`];
+        let employeeResults = [
+          `${answers.firstName} ${answers.lastName}, ${answers.role}, ${answers.manager}`,
+        ];
+        newEmployee.push(employeeResults);
+
+        db.query(
+          `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ('${answers.firstName}', '${answers.lastName}', 1, null)`,
+          function (err, results) {
+            if (err) throw err;
+          }
+        );
+
+        console.log(newEmployee);
+        console.log(
+          `Added ${answers.firstName} ${answers.lastName} to the database`
+        );
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+
+      // addEmployee()
+    } else if (answers.choice === "Add Role") {
+      inquirer.prompt(roleQuestions).then((answers) => {
+        let roleResultName = [`${answers.roleName}`];
+        let roleResultSalary = [`${answers.roleSalary}`];
+        let roleResultDepartment = [`${answers.roleDepartment}`];
+        let roleResults = [
+          `${answers.roleName}, ${answers.roleSalary}, ${answers.roleDepartment}`,
+        ];
+        newRole.push(roleResults);
+
+        db.query(
+          `INSERT INTO role(title, salary, department_id) VALUES ('${roleResultName}', '${roleResultSalary}', 5)`,
+          function (err, results) {
+            if (err) throw err;
+          }
+        );
+
+        console.log(newRole);
+        console.log(`Added ${answers.roleName} to the database`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Add Department") {
+      inquirer.prompt(departmentQuestion).then((answers) => {
+        let departmentResults = [`${answers.departmentName}`];
+        newDepartment.push(departmentResults);
+
+        db.query(
+          `INSERT INTO department(name) VALUES ('${departmentResults}')`,
+          function (err, results) {
+            if (err) throw err;
+          }
+        );
+
+        console.log(newDepartment);
+        console.log(`Added ${answers.departmentName} to the database`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Update Employee Role") {
+      inquirer.prompt(updateEmployeeRoleQuestions).then((answers) => {
+        let updateResults = [`${answers.updateName}, ${answers.updateAssign}`];
+        newUpdate.push(updateResults);
+        console.log(newUpdate);
+        console.log(`Updated Employee's Role`);
+        mainQuestionFunction(); //Allows to loop through questions
+      });
+    } else if (answers.choice === "Quit") {
+      quit();
+    } else {
+      return "Exiting Application";
+    }
+  });
+}
+
+// db.connect(function(err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+//   var sql = `INSERT INTO department (id,name) VALUES (5, ${answers.departmentName})`;
+//   db.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log(result);
+//   });
+// });
+
 // Generates the HTML page after done creating employees
 // function generateHTML() {
 //   let cards = "";
@@ -212,92 +316,3 @@ const updateEmployeeRoleQuestions = [
 //       console.log("Please create an employee!");
 //     }
 //   }
-
-// Enables prompting of questions and takes in users input
-inquirer.prompt(startQuestion).then((answers) => {
-  if (answers.name === "Quit") {
-    return Quitting;
-  } else {
-    mainQuestionFunction(); // Allows to loop through questions
-  }
-});
-
-// Asks the main question
-function mainQuestionFunction() {
-  inquirer.prompt(mainQuestion).then((answers) => {
-    //"Engineer", "Intern", "I don't want to add anymore team members"
-    if (answers.position === "Engineer") {
-      inquirer.prompt(questionsEngineer).then((answers) => {
-        let newEngineer = new Engineer(
-          answers.name,
-          answers.id,
-          answers.email,
-          answers.gitHub
-        );
-        employees.push(newEngineer);
-        console.log(employees);
-        mainQuestionFunction();
-      }); //Allows to loop through questions
-    } else if (answers.choice === "View All Employees") {
-      viewAllEmployees();
-    } else if (answers.choice === "View All Roles") {
-      viewAllRoles();
-    } else if (answers.choice === "View All Departments") {
-      viewAllDepartments();
-    } else if (answers.choice === "Add Employee") {
-      inquirer.prompt(employeeQuestions).then((answers) => {
-        let employeeResults = [
-          `${answers.firstName} ${answers.lastName}, ${answers.role}, ${answers.manager}`
-        ];
-
-        newEmployee.push(employeeResults)
-        console.log(newEmployee)
-        console.log(
-          `Added ${answers.firstName} ${answers.lastName} to the database`
-        );
-        mainQuestionFunction(); //Allows to loop through questions
-      });
-
-      // addEmployee()
-    } else if (answers.choice === "Add Role") {
-      inquirer.prompt(roleQuestions).then((answers) => {
-
-        let roleResults = [`${answers.roleName}, ${answers.roleSalary}, ${answers.roleDepartment}`]
-        newRole.push(roleResults)
-        console.log(newRole)
-        console.log(`Added ${answers.roleName} to the database`);
-        mainQuestionFunction(); //Allows to loop through questions
-      });
-    } else if (answers.choice === "Add Department") {
-      inquirer.prompt(departmentQuestion).then((answers) => {
-
-        let departmentResults = [`${answers.departmentName}`];
-        newDepartment.push(departmentResults);
-        console.log(newDepartment)
-        console.log(`Added ${answers.departmentName} to the database`);
-        mainQuestionFunction(); //Allows to loop through questions
-      });
-    } else if (answers.choice === "Update Employee Role") {
-      inquirer.prompt(updateEmployeeRoleQuestions).then((answers) => {
-        let updateResults = [`${answers.updateName}, ${answers.updateAssign}`];
-        newUpdate.push(updateResults);
-        console.log(newUpdate);
-        console.log(`Updated Employee's Role`);
-        mainQuestionFunction(); //Allows to loop through questions
-      });
-    } else if (answers.choice === "Quit") {
-      quit();
-    } else {
-      console.log("Generating team");
-      console.log(employees);
-
-      fs.writeFile("./dist/output.html", generateHTML(), (err) => {
-        if (err) {
-          throw err;
-        } else {
-          console.log("Generating Team Profiles!");
-        }
-      });
-    }
-  });
-}
