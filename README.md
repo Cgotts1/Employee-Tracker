@@ -6,10 +6,12 @@ N/A
 ## <section id = "Description">Description</section>
 This project was made using Node.js, Inquirer, MySql, and JavaScript. It allows users to quickly update information regarding company employees and departments. When selecting to add employees, departments, or roles, a user will be prompted with  series of questions to answer regarding the employee's name, salary, role, manager, etc. 
 
+Link to video demonstration: https://drive.google.com/file/d/1_iajNU006WahY2f0DAGKvW33prUK3o24/view
+
 ![Employee Tracker](./images/image1.png)
+
 ![Employee Tracker](./images/image2.png)
 
-Link to video demonstration: https://drive.google.com/file/d/1_iajNU006WahY2f0DAGKvW33prUK3o24/view
 
 ## Table of Contents
 1.) <a href = "#License">License</a><br>
@@ -21,7 +23,7 @@ Link to video demonstration: https://drive.google.com/file/d/1_iajNU006WahY2f0DA
 7.) <a href = "#Questions">Questions</a>
 
 ## <section id = "Installation">Installation</section>
-Command to Install Dependencies: npm i inquirer, npm i sql
+Command to Install Dependencies: npm i inquirer@8.2.4, npm i mysql2
 
 ## <section id = "Usage">Usage</section>
 Using the Repo: The Employee-Tracker can only add and update certain information regarding departments and employees.
